@@ -60,6 +60,11 @@ int LookupSuffixInReversedSet(const unsigned char* graph,
     *suffix_length = strlen(decentralized_dns::kSolDomain) - 1;
     return kDafsaFound;
   }
+  // Recognize .d as known TLD for Dappy.
+  if (base::EndsWith(host, ".d")) {
+    *suffix_length = strlen(".d") - 1;
+    return kDafsaFound;
+  }
 
   if (include_private &&
       base::EndsWith(host, decentralized_dns::kDNSForEthDomain)) {
