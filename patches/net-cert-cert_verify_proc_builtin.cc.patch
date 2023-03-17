@@ -1,0 +1,14 @@
+diff --git a/net/cert/cert_verify_proc_builtin.cc b/net/cert/cert_verify_proc_builtin.cc
+index 9b2fb1e0f4896ea44a339566720caefc6f94cb3c..2a9e38f960d2cc19c62a18a017880eccb639105f 100644
+--- a/net/cert/cert_verify_proc_builtin.cc
++++ b/net/cert/cert_verify_proc_builtin.cc
+@@ -709,6 +709,9 @@ int CertVerifyProcBuiltin::VerifyInternal(
+     const CertificateList& additional_trust_anchors,
+     CertVerifyResult* verify_result,
+     const NetLogWithSource& net_log) {
++
++  BRAVE_DAPPY_CERT_VERIFY
++  
+   // VerifyInternal() is expected to carry out verifications using the current
+   // time stamp.
+   base::Time verification_time = base::Time::Now();
