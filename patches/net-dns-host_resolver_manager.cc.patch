@@ -1,0 +1,21 @@
+diff --git a/net/dns/host_resolver_manager.cc b/net/dns/host_resolver_manager.cc
+index 65a707284cbcbbcf88ce976cb3f405b9c8880c9e..efd9ee7f7b54b686a0e80f33be218251f21a92ce 100644
+--- a/net/dns/host_resolver_manager.cc
++++ b/net/dns/host_resolver_manager.cc
+@@ -663,7 +663,7 @@ class HostResolverManager::RequestImpl
+     // completed.
+     DCHECK(!complete_);
+     DCHECK(!results_);
+-    DCHECK(!parameters_.is_speculative);
+ 
+     results_ = std::move(results);
+     FixUpEndpointAndAliasResults();
+@@ -3086,6 +3086,8 @@ int HostResolverManager::Resolve(RequestImpl* request) {
+   IPAddress ip_address;
+   bool is_ip = ip_address.AssignFromIPLiteral(GetHostname(job_key.host));
+ 
++  BRAVE_DAPPY_DOMAIN_CHECK
++
+   GetEffectiveParametersForRequest(
+       job_key.host, parameters.dns_query_type, request->host_resolver_flags(),
+       parameters.secure_dns_policy, is_ip, request->source_net_log(),
