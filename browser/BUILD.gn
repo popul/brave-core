@@ -37,6 +37,7 @@ source_set("browser_process") {
     "//brave/components/tor/buildflags",
     "//chrome/browser:browser_process",
     "//extensions/buildflags",
+    "//brave/components/dappy",
   ]
 }
 

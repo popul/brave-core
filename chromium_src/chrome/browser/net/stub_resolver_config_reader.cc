@@ -15,6 +15,12 @@
 #include "services/network/public/mojom/network_service.mojom.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
+#include "base/strings/strcat.h"
+#include "brave/net/dappy/constants.h"
+#include "brave/components/dappy/utils.h"
+
+
+
 #if BUILDFLAG(ENABLE_BRAVE_VPN)
 #include "brave/components/brave_vpn/common/features.h"
 #endif
@@ -133,7 +139,33 @@ SecureDnsConfig::ManagementMode MaybeOverrideForcedManagementMode(
                              is_managed),                                      \
       ADDITIONAL_DNS_TYPES_ENABLED)
 #endif  // BUILDFLAG(IS_WIN) && BUILDFLAG(ENABLE_BRAVE_VPN)
+
+namespace {
+
+void AddDappyResolver(std::string* doh_templates,
+                                   PrefService* local_state) {
+  if (dappy::IsResolveMethodDoH(local_state) &&
+      doh_templates->find(dappy::kDoHResolver) ==
+          std::string::npos) {
+    *doh_templates =
+        base::StrCat({dappy::kDoHResolver, " ", *doh_templates});
+  }
+}
+
+void AddDoHServers(std::string* doh_templates,
+                   PrefService* local_state) {
+  AddDappyResolver(doh_templates, local_state);
+}
+
+}
+
+#define BRAVE_GET_AND_UPDATE_CONFIGURATION \
+  AddDoHServers(&default_doh_templates, local_state_);
+
 #include "src/chrome/browser/net/stub_resolver_config_reader.cc"
+
+#undef BRAVE_GET_AND_UPDATE_CONFIGURATION
+
 #if BUILDFLAG(IS_WIN) && BUILDFLAG(ENABLE_BRAVE_VPN)
 #undef ConfigureStubHostResolver
 #undef SecureDnsConfig

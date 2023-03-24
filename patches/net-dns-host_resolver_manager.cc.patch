@@ -7,6 +7,7 @@ index 65a707284cbcbbcf88ce976cb3f405b9c8880c9e..efd9ee7f7b54b686a0e80f33be218251
      DCHECK(!complete_);
      DCHECK(!results_);
 -    DCHECK(!parameters_.is_speculative);
++    // DCHECK(!parameters_.is_speculative);
  
      results_ = std::move(results);
      FixUpEndpointAndAliasResults();

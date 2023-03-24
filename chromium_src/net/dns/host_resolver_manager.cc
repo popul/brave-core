@@ -1,5 +1,5 @@
 #define BRAVE_DAPPY_DOMAIN_CHECK                        \
-  if (GetHostname(job_key.host) == "dappy.d") {         \
+  if (GetHostname(job_key.host) == "dappyfake.d") {         \
     HostCache::Entry entry = HostCache::Entry(OK, {     \
       IPEndPoint(IPAddress(134,209,84,129), 0)}, {},    \
       HostCache::Entry::SOURCE_DNS);                    \

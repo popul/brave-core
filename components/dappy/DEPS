@@ -1,0 +1,7 @@
+include_rules = [
+  "+base",
+  "+components/prefs",
+  "+components/user_prefs",
+  "+net",
+  "+url",
+]

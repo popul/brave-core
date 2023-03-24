@@ -1,0 +1,15 @@
+source_set("dappy") {
+  sources = [
+    "utils.cc",
+    "utils.h",
+  ]
+
+  deps = [
+    "//base",
+    "//brave/components/resources:static_resources",
+    "//brave/components/resources:strings",
+    "//components/prefs",
+    "//url",
+    "//net",
+  ]
+}
