@@ -1,5 +1,5 @@
 diff --git a/net/dns/host_resolver_manager.cc b/net/dns/host_resolver_manager.cc
-index 65a707284cbcbbcf88ce976cb3f405b9c8880c9e..efd9ee7f7b54b686a0e80f33be218251f21a92ce 100644
+index 65a707284cbcbbcf88ce976cb3f405b9c8880c9e..44d925f7d7dac7c5e9bd0a3b826d251cd3fc6aaf 100644
 --- a/net/dns/host_resolver_manager.cc
 +++ b/net/dns/host_resolver_manager.cc
 @@ -663,7 +663,7 @@ class HostResolverManager::RequestImpl
@@ -11,7 +11,18 @@ index 65a707284cbcbbcf88ce976cb3f405b9c8880c9e..efd9ee7f7b54b686a0e80f33be218251
  
      results_ = std::move(results);
      FixUpEndpointAndAliasResults();
-@@ -3086,6 +3086,8 @@ int HostResolverManager::Resolve(RequestImpl* request) {
+@@ -739,9 +739,7 @@ class HostResolverManager::RequestImpl
+ 
+       // Skip fixups for `include_canonical_name` requests. Just use the
+       // canonical name exactly as it was received from the system resolver.
+-      if (parameters().include_canonical_name) {
+-        DCHECK_LE(fixed_up_dns_alias_results_.value().size(), 1u);
+-      } else {
++      if (!parameters().include_canonical_name) {
+         fixed_up_dns_alias_results_ = dns_alias_utility::FixUpDnsAliases(
+             fixed_up_dns_alias_results_.value());
+       }
+@@ -3086,6 +3084,8 @@ int HostResolverManager::Resolve(RequestImpl* request) {
    IPAddress ip_address;
    bool is_ip = ip_address.AssignFromIPLiteral(GetHostname(job_key.host));
  

@@ -1,13 +1,13 @@
 diff --git a/chrome/browser/net/stub_resolver_config_reader.cc b/chrome/browser/net/stub_resolver_config_reader.cc
-index 14db5800fac2adbd6566802c34047283e00e956d..40a3e9dcd89791f6ec303cfffa7ae395e037fc44 100644
+index 14db5800fac2adbd6566802c34047283e00e956d..ebfeb568642c718b7856d834c468083e69f1f752 100644
 --- a/chrome/browser/net/stub_resolver_config_reader.cc
 +++ b/chrome/browser/net/stub_resolver_config_reader.cc
-@@ -131,6 +131,8 @@ StubResolverConfigReader::StubResolverConfigReader(PrefService* local_state,
-         default_secure_dns_mode = net::SecureDnsMode::kSecure;
-       }
-       default_doh_templates = features::kDnsOverHttpsTemplatesParam.Get();
-+      
-+      BRAVE_GET_AND_UPDATE_CONFIGURATION
-     }
-     local_state_->SetDefaultPrefValue(
-         prefs::kDnsOverHttpsMode,
+@@ -384,6 +384,8 @@ SecureDnsConfig StubResolverConfigReader::GetAndUpdateConfiguration(
+ #else
+     doh_config = net::DnsOverHttpsConfig::FromStringLax(
+         local_state_->GetString(prefs::kDnsOverHttpsTemplates));
++    
++    BRAVE_GET_AND_UPDATE_CONFIGURATION
+ #endif
+   }
+   if (update_network_service) {

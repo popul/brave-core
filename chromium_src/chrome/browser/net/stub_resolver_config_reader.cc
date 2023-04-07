@@ -19,8 +19,6 @@
 #include "brave/net/dappy/constants.h"
 #include "brave/components/dappy/utils.h"
 
-
-
 #if BUILDFLAG(ENABLE_BRAVE_VPN)
 #include "brave/components/brave_vpn/common/features.h"
 #endif
@@ -142,25 +140,25 @@ SecureDnsConfig::ManagementMode MaybeOverrideForcedManagementMode(
 
 namespace {
 
-void AddDappyResolver(std::string* doh_templates,
-                                   PrefService* local_state) {
-  if (dappy::IsResolveMethodDoH(local_state) &&
-      doh_templates->find(dappy::kDoHResolver) ==
-          std::string::npos) {
-    *doh_templates =
-        base::StrCat({dappy::kDoHResolver, " ", *doh_templates});
-  }
-}
-
-void AddDoHServers(std::string* doh_templates,
+void AddDoHServers(net::DnsOverHttpsConfig* doh_config,
                    PrefService* local_state) {
-  AddDappyResolver(doh_templates, local_state);
+  std::string doh_config_string = doh_config->ToString();
+
+  if (dappy::IsResolveMethodDoH(local_state) &&
+      doh_config_string.find(dappy::kDoHResolver) ==
+          std::string::npos) {
+
+    doh_config_string =
+        base::StrCat({dappy::kDoHResolver, " ", doh_config_string});
+    
+    *doh_config = net::DnsOverHttpsConfig::FromStringLax(doh_config_string);        
+  }
 }
 
 }
 
 #define BRAVE_GET_AND_UPDATE_CONFIGURATION \
-  AddDoHServers(&default_doh_templates, local_state_);
+  AddDoHServers(&doh_config, local_state_);
 
 #include "src/chrome/browser/net/stub_resolver_config_reader.cc"
 
