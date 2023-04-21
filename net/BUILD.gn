@@ -5,6 +5,9 @@ source_set("unit_tests") {
   sources = [
     "http/partitioned_host_state_map_unittest.cc",
     "http/transport_security_state_unittest.cc",
+    "dappy/dappy_cert_fetcher.cc",
+    "dappy/dappy_cert_fetcher.h",
+    "dappy/dappy_cert_fetcher_unittest.cc",
   ]
 
   if (enable_tor) {

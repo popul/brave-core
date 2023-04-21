@@ -9,5 +9,7 @@ brave_net_sources = [
   "//brave/net/http/partitioned_host_state_map.h",
   "//brave/net/proxy_resolution/proxy_config_service_tor.cc",
   "//brave/net/proxy_resolution/proxy_config_service_tor.h",
+  "//brave/net/dappy/dappy_cert_fetcher.cc",
+  "//brave/net/dappy/dappy_cert_fetcher.h",
   "//brave/net/dappy/constants.h",
 ]
