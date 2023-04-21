@@ -16,7 +16,7 @@ class DappyCertFetcher : public net::URLRequest::Delegate {
   DappyCertFetcher(std::unique_ptr<net::URLRequestContext> context);
   ~DappyCertFetcher() override;
 
-  std::string FetchCertificate(const GURL& url);
+  scoped_refptr<net::X509Certificate> FetchCertificate(const GURL& url);
 
   void OnResponseStarted(net::URLRequest* request, int net_error) override;
   void OnReadCompleted(net::URLRequest* request, int bytes_read) override;

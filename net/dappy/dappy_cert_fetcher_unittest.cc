@@ -5,6 +5,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 #include "base/threading/thread.h"
+#include "net/cert/x509_certificate.h"
 #include "net/url_request/url_request.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_builder.h"
@@ -31,11 +32,15 @@ class DappyCertFetcherTest : public testing::Test {
 
 TEST_F(DappyCertFetcherTest, FetchCertificateNonEmpty) {
   DappyCertFetcher cert_fetcher(std::move(context));
-  std::string cert_data = cert_fetcher.FetchCertificate(
-      GURL("http://localhost:8090/some_certificate.crt"));
+  scoped_refptr<net::X509Certificate> cert = cert_fetcher.FetchCertificate(
+      GURL("http://localhost:8090/certificate.der"));
 
-  std::cout << "Cert data :\n" << cert_data << std::endl;
-  EXPECT_FALSE(cert_data.empty());
+  std::string pem_encoded;
+  net::X509Certificate::GetPEMEncoded(cert->cert_buffer(), &pem_encoded);
+  std::cout << "PEM:\n" << pem_encoded << std::endl;
+  
+  EXPECT_TRUE(cert);
+  EXPECT_TRUE(pem_encoded.size() > 0);
 }
 
 }  // namespace dappy
