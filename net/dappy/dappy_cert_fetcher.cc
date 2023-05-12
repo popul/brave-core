@@ -4,6 +4,11 @@
 #include "net/url_request/url_request_context.h"
 #include "net/traffic_annotation/network_traffic_annotation.h"
 #include "net/cert/x509_certificate.h"
+#include "base/task/single_thread_task_runner.h"
+#include "base/task/thread_pool.h"
+#include "base/threading/platform_thread.h"
+#include "content/public/browser/browser_thread.h"
+#include "content/public/browser/browser_task_traits.h"
 
 namespace dappy {
 
@@ -11,31 +16,31 @@ DappyCertFetcher::DappyCertFetcher(
     std::unique_ptr<net::URLRequestContext> context)
     : context(std::move(context)) {
       read_buffer_ = base::MakeRefCounted<net::IOBuffer>(read_buffer_size_);
+      // owning_sequence_ = base::SequencedTaskRunner::GetCurrentDefault();
     }
 
-DappyCertFetcher::~DappyCertFetcher() = default;
 
-scoped_refptr<net::X509Certificate> DappyCertFetcher::FetchCertificate(const GURL& url) {
+void DappyCertFetcher::FetchCertificate(const GURL& url, scoped_refptr<net::X509Certificate>* cert, base::OnceClosure on_done) {
+  on_done_ = std::move(on_done);
+  response_cert = cert;
+
   url_request_ = std::unique_ptr<net::URLRequest>(context->CreateRequest(url, net::DEFAULT_PRIORITY, this, NO_TRAFFIC_ANNOTATION_YET));
   url_request_->set_method("GET");
+
   url_request_->Start();
+  base::PlatformThread::Sleep(base::Seconds(1));
+}
 
-  // Sync call
-  run_loop_.Run();
-
-  base::span<const uint8_t> cert_bytes(reinterpret_cast<const uint8_t*>(response_data_.data()),
-                                       response_data_.size());
-
-  scoped_refptr<net::X509Certificate> cert = net::X509Certificate::CreateFromBytes(cert_bytes);
-
-  DCHECK(cert);
-
-  return cert;
+DappyCertFetcher::~DappyCertFetcher() {
+  if (url_request_) {
+    url_request_.reset();
+  }
 }
 
 void DappyCertFetcher::OnResponseStarted(net::URLRequest* request, int net_error) {
   if (net_error != net::OK) {
-    run_loop_.Quit();
+    url_request_.reset();
+    std::move(on_done_).Run();
     return;
   }
 
@@ -50,8 +55,15 @@ void DappyCertFetcher::OnResponseStarted(net::URLRequest* request, int net_error
 }
 
 void DappyCertFetcher::OnReadCompleted(net::URLRequest* request, int bytes_read) {
+  base::span<const uint8_t> cert_bytes(reinterpret_cast<const uint8_t*>(response_data_.data()),
+                                       response_data_.size());
+
+  *response_cert = net::X509Certificate::CreateFromBytes(cert_bytes);
+
+  DCHECK(*response_cert);
+
   url_request_.reset();
-  run_loop_.Quit();
+  std::move(on_done_).Run();
 }
 
 }  // namespace dappy
